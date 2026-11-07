@@ -167,7 +167,9 @@ model selection 711.5 s, backtest 743.7 s, final fit 24.4 s, drift 27.5 s (`→ 
 - Yellow taxis only. FHV (Uber/Lyft) trips, the larger share of NYC rides, are not modelled.
 - The DST spring-forward hour is in the hourly spine with zero pickups (none fall in the test
   window).
-- CI (`.github/workflows/ci.yml`) is written but has not run: the repo has not been pushed.
+- CI (`.github/workflows/ci.yml`, ruff + pytest on small fixtures) passed on its first GitHub run
+  ([run 42404162408](https://github.com/fahranalam04-cmd/nyc-demand-forecast/actions/runs/42404162408), 2026-11-07). It does not
+  download TLC data or run the full Dagster graph.
 
 ## Reproduce (3 commands)
 

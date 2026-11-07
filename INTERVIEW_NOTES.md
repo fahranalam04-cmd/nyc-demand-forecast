@@ -84,7 +84,8 @@ All numbers below come from `reports/*.json` and are produced by the pipeline in
 - MSTL is disadvantaged on days 2-7 of each fold (see above). The headline comparison is against
   seasonal naive, which is exact and day-ahead.
 - Only yellow taxis; FHV (Uber/Lyft) demand, the larger share of NYC trips, is not modelled.
-- CI has never run on GitHub (the repo has not been pushed); it is written for ubuntu + uv.
+- CI (ubuntu + uv) passes on GitHub but only runs lint and fast tests on fixtures; the full pipeline
+  (93M rows, Dagster graph, backtest) has only been run on the development laptop.
 
 ## Likely interview questions
 
