@@ -70,7 +70,7 @@ def ensure_dirs() -> None:
         d.mkdir(parents=True, exist_ok=True)
 
 
-def duckdb_connect(read_only: bool = False):  # noqa: ANN201 - duckdb type is fine implicit
+def duckdb_connect(read_only: bool = False):
     """Open the warehouse with the shared-laptop resource caps applied."""
     import duckdb
 

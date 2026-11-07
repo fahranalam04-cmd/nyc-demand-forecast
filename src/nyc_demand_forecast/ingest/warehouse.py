@@ -26,7 +26,7 @@ def trip_files(months: list[str] | None = None) -> list[Path]:
     return files
 
 
-def register_trips(con) -> int:  # noqa: ANN001
+def register_trips(con) -> int:
     """(Re)create the raw.yellow_tripdata view over the monthly files; returns its row count."""
     con.execute("CREATE SCHEMA IF NOT EXISTS raw")
     file_list = ", ".join(f"'{_sql_path(f)}'" for f in trip_files())
@@ -39,7 +39,7 @@ def register_trips(con) -> int:  # noqa: ANN001
     return con.execute("SELECT count(*) FROM raw.yellow_tripdata").fetchone()[0]
 
 
-def register_zones(con) -> int:  # noqa: ANN001
+def register_zones(con) -> int:
     con.execute("CREATE SCHEMA IF NOT EXISTS raw")
     zones = _sql_path(config.TLC_DIR / "taxi_zone_lookup.csv")
     con.execute(
@@ -49,7 +49,7 @@ def register_zones(con) -> int:  # noqa: ANN001
     return con.execute("SELECT count(*) FROM raw.taxi_zone_lookup").fetchone()[0]
 
 
-def register_weather(con) -> dict[str, int]:  # noqa: ANN001
+def register_weather(con) -> dict[str, int]:
     con.execute("CREATE SCHEMA IF NOT EXISTS raw")
     counts = {}
     for name in ("observed", "forecast_d2"):

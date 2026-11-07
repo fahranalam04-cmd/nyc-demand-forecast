@@ -43,7 +43,7 @@ order by s.unique_id, s.ds
 """
 
 
-def load_series(top_n: int | None = None, con=None) -> pd.DataFrame:  # noqa: ANN001
+def load_series(top_n: int | None = None, con=None) -> pd.DataFrame:
     """Return the long-format modelling frame (unique_id, ds, y, series_group, exog...)."""
     top_n = top_n or config.CONFIG.top_n_zones
     own = con is None
@@ -69,7 +69,7 @@ def validate_series(df: pd.DataFrame) -> dict[str, int | bool]:
     expected = ((per_series["max"] - per_series["min"]) / pd.Timedelta(hours=1) + 1).astype(int)
     return {
         "n_series": int(df["unique_id"].nunique()),
-        "n_rows": int(len(df)),
+        "n_rows": len(df),
         "regular_hourly_index": bool((per_series["count"] == expected).all()),
         "same_span_all_series": bool(per_series["min"].nunique() == 1 and per_series["max"].nunique() == 1),
         "null_cells": int(df[["y", *EXOG_COLS]].isna().sum().sum()),

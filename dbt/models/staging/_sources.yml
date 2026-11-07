@@ -45,7 +45,7 @@ sources:
         description: Open-Meteo Historical Weather API (reanalysis), hourly, GMT timestamps.
         meta:
           dagster:
-            asset_key: ["raw_weather"]
+            asset_key: ["raw_weather_observed"]
         columns:
           - name: time_utc
             data_tests: [unique, not_null]
@@ -55,7 +55,7 @@ sources:
           issued by the model run ~48 h earlier, i.e. information available at forecast time.
         meta:
           dagster:
-            asset_key: ["raw_weather"]
+            asset_key: ["raw_weather_forecast_d2"]
         columns:
           - name: time_utc
             data_tests: [unique, not_null]

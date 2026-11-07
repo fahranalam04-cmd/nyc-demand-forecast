@@ -1,0 +1,344 @@
+{
+  "generated_at": "2026-11-07T13:49:09+00:00",
+  "rule_order": [
+    "duplicate",
+    "pickup_outside_file_month",
+    "invalid_duration",
+    "negative_amount",
+    "unknown_pickup_zone",
+    "implausible_distance"
+  ],
+  "totals": {
+    "rows_raw": 93450512,
+    "removed_duplicate": 10,
+    "removed_pickup_outside_file_month": 506,
+    "removed_invalid_duration": 61950,
+    "removed_negative_amount": 1342398,
+    "removed_unknown_pickup_zone": 185895,
+    "removed_implausible_distance": 4352,
+    "rows_clean": 91855401,
+    "rows_removed": 1595111,
+    "pct_removed": 1.7069045057773466
+  },
+  "max_monthly_pct_removed": 3.324449639885174,
+  "per_month": [
+    {
+      "source_month": "2024-10-01",
+      "rows_raw": 3833771.0,
+      "removed_duplicate": 2.0,
+      "removed_pickup_outside_file_month": 40,
+      "removed_invalid_duration": 2722,
+      "removed_negative_amount": 61421,
+      "removed_unknown_pickup_zone": 12165,
+      "removed_implausible_distance": 119,
+      "rows_clean": 3757302,
+      "pct_removed": 1.9946157451762203
+    },
+    {
+      "source_month": "2024-11-01",
+      "rows_raw": 3646369.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 50,
+      "removed_invalid_duration": 3668,
+      "removed_negative_amount": 60540,
+      "removed_unknown_pickup_zone": 10938,
+      "removed_implausible_distance": 133,
+      "rows_clean": 3571040,
+      "pct_removed": 2.06586332869767
+    },
+    {
+      "source_month": "2024-12-01",
+      "rows_raw": 3668371.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 34,
+      "removed_invalid_duration": 2858,
+      "removed_negative_amount": 70485,
+      "removed_unknown_pickup_zone": 11387,
+      "removed_implausible_distance": 119,
+      "rows_clean": 3583488,
+      "pct_removed": 2.3139153591607786
+    },
+    {
+      "source_month": "2025-01-01",
+      "rows_raw": 3475226.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 22,
+      "removed_invalid_duration": 2019,
+      "removed_negative_amount": 63021,
+      "removed_unknown_pickup_zone": 9301,
+      "removed_implausible_distance": 153,
+      "rows_clean": 3400710,
+      "pct_removed": 2.1442058732295433
+    },
+    {
+      "source_month": "2025-02-01",
+      "rows_raw": 3577543.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 31,
+      "removed_invalid_duration": 1892,
+      "removed_negative_amount": 55172,
+      "removed_unknown_pickup_zone": 8405,
+      "removed_implausible_distance": 160,
+      "rows_clean": 3511883,
+      "pct_removed": 1.8353378282245703
+    },
+    {
+      "source_month": "2025-03-01",
+      "rows_raw": 4145257.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 33,
+      "removed_invalid_duration": 2216,
+      "removed_negative_amount": 68676,
+      "removed_unknown_pickup_zone": 8960,
+      "removed_implausible_distance": 208,
+      "rows_clean": 4065164,
+      "pct_removed": 1.9321600566623465
+    },
+    {
+      "source_month": "2025-04-01",
+      "rows_raw": 3970553.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 7,
+      "removed_invalid_duration": 2383,
+      "removed_negative_amount": 72599,
+      "removed_unknown_pickup_zone": 8699,
+      "removed_implausible_distance": 294,
+      "rows_clean": 3886571,
+      "pct_removed": 2.1151209919625824
+    },
+    {
+      "source_month": "2025-05-01",
+      "rows_raw": 4591845.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 24,
+      "removed_invalid_duration": 2936,
+      "removed_negative_amount": 112532,
+      "removed_unknown_pickup_zone": 9378,
+      "removed_implausible_distance": 351,
+      "rows_clean": 4466624,
+      "pct_removed": 2.7270302024567483
+    },
+    {
+      "source_month": "2025-06-01",
+      "rows_raw": 4322960.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 20,
+      "removed_invalid_duration": 3420,
+      "removed_negative_amount": 74244,
+      "removed_unknown_pickup_zone": 8317,
+      "removed_implausible_distance": 257,
+      "rows_clean": 4236702,
+      "pct_removed": 1.9953457815940934
+    },
+    {
+      "source_month": "2025-07-01",
+      "rows_raw": 3898963.0,
+      "removed_duplicate": 1.0,
+      "removed_pickup_outside_file_month": 7,
+      "removed_invalid_duration": 2444,
+      "removed_negative_amount": 76446,
+      "removed_unknown_pickup_zone": 8014,
+      "removed_implausible_distance": 258,
+      "rows_clean": 3811793,
+      "pct_removed": 2.235722678055674
+    },
+    {
+      "source_month": "2025-08-01",
+      "rows_raw": 3574091.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 17,
+      "removed_invalid_duration": 2695,
+      "removed_negative_amount": 87928,
+      "removed_unknown_pickup_zone": 7278,
+      "removed_implausible_distance": 223,
+      "rows_clean": 3475950,
+      "pct_removed": 2.7459009857331518
+    },
+    {
+      "source_month": "2025-09-01",
+      "rows_raw": 4251015.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 7,
+      "removed_invalid_duration": 2412,
+      "removed_negative_amount": 78484,
+      "removed_unknown_pickup_zone": 7910,
+      "removed_implausible_distance": 203,
+      "rows_clean": 4161999,
+      "pct_removed": 2.0939940226040177
+    },
+    {
+      "source_month": "2025-10-01",
+      "rows_raw": 4428699.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 13,
+      "removed_invalid_duration": 2588,
+      "removed_negative_amount": 108726,
+      "removed_unknown_pickup_zone": 8292,
+      "removed_implausible_distance": 215,
+      "rows_clean": 4308865,
+      "pct_removed": 2.705851086289679
+    },
+    {
+      "source_month": "2025-11-01",
+      "rows_raw": 4181444.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 24,
+      "removed_invalid_duration": 4080,
+      "removed_negative_amount": 126855,
+      "removed_unknown_pickup_zone": 7847,
+      "removed_implausible_distance": 204,
+      "rows_clean": 4042434,
+      "pct_removed": 3.324449639885174
+    },
+    {
+      "source_month": "2025-12-01",
+      "rows_raw": 4305006.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 9,
+      "removed_invalid_duration": 3604,
+      "removed_negative_amount": 48863,
+      "removed_unknown_pickup_zone": 7432,
+      "removed_implausible_distance": 185,
+      "rows_clean": 4244913,
+      "pct_removed": 1.3958865562556655
+    },
+    {
+      "source_month": "2026-01-01",
+      "rows_raw": 3724889.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 7,
+      "removed_invalid_duration": 2474,
+      "removed_negative_amount": 39975,
+      "removed_unknown_pickup_zone": 5766,
+      "removed_implausible_distance": 153,
+      "rows_clean": 3676514,
+      "pct_removed": 1.2986964175308313
+    },
+    {
+      "source_month": "2026-02-01",
+      "rows_raw": 3399866.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 16,
+      "removed_invalid_duration": 2020,
+      "removed_negative_amount": 27269,
+      "removed_unknown_pickup_zone": 4891,
+      "removed_implausible_distance": 163,
+      "rows_clean": 3365507,
+      "pct_removed": 1.0105986530057343
+    },
+    {
+      "source_month": "2026-03-01",
+      "rows_raw": 3952451.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 19,
+      "removed_invalid_duration": 2379,
+      "removed_negative_amount": 21297,
+      "removed_unknown_pickup_zone": 6118,
+      "removed_implausible_distance": 150,
+      "rows_clean": 3922488,
+      "pct_removed": 0.7580865645140156
+    },
+    {
+      "source_month": "2026-04-01",
+      "rows_raw": 3831240.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 12,
+      "removed_invalid_duration": 1702,
+      "removed_negative_amount": 14866,
+      "removed_unknown_pickup_zone": 5922,
+      "removed_implausible_distance": 129,
+      "rows_clean": 3808609,
+      "pct_removed": 0.590696484689035
+    },
+    {
+      "source_month": "2026-05-01",
+      "rows_raw": 4090836.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 14,
+      "removed_invalid_duration": 2100,
+      "removed_negative_amount": 14866,
+      "removed_unknown_pickup_zone": 6371,
+      "removed_implausible_distance": 129,
+      "rows_clean": 4067356,
+      "pct_removed": 0.5739658104113698
+    },
+    {
+      "source_month": "2026-06-01",
+      "rows_raw": 3837248.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 17,
+      "removed_invalid_duration": 2012,
+      "removed_negative_amount": 14292,
+      "removed_unknown_pickup_zone": 6400,
+      "removed_implausible_distance": 134,
+      "rows_clean": 3814393,
+      "pct_removed": 0.5956091448871659
+    },
+    {
+      "source_month": "2026-07-01",
+      "rows_raw": 3530109.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 46,
+      "removed_invalid_duration": 1995,
+      "removed_negative_amount": 14695,
+      "removed_unknown_pickup_zone": 6031,
+      "removed_implausible_distance": 162,
+      "rows_clean": 3507180,
+      "pct_removed": 0.6495266860031768
+    },
+    {
+      "source_month": "2026-08-01",
+      "rows_raw": 3336716.0,
+      "removed_duplicate": 7.0,
+      "removed_pickup_outside_file_month": 15,
+      "removed_invalid_duration": 3751,
+      "removed_negative_amount": 14493,
+      "removed_unknown_pickup_zone": 4885,
+      "removed_implausible_distance": 131,
+      "rows_clean": 3313434,
+      "pct_removed": 0.6977519213502092
+    },
+    {
+      "source_month": "2026-09-01",
+      "rows_raw": 3876044.0,
+      "removed_duplicate": 0.0,
+      "removed_pickup_outside_file_month": 22,
+      "removed_invalid_duration": 1580,
+      "removed_negative_amount": 14653,
+      "removed_unknown_pickup_zone": 5188,
+      "removed_implausible_distance": 119,
+      "rows_clean": 3854482,
+      "pct_removed": 0.5562888346984707
+    }
+  ],
+  "vendor_anomalies": {
+    "vendor7_rows": 951144,
+    "vendor7_zero_duration_rows": 951144,
+    "vendor7_zero_duration_with_distance_rows": 935785,
+    "vendor7_first_month": "2024-12-01 00:00:00",
+    "vendor2_negative_fare_positive_total_rows": 1914022,
+    "kept_by_refined_rules_note": "naive 'duration<=0 or fare<0' filters would drop these real pickups"
+  },
+  "warehouse": {
+    "modelable_zones": 263,
+    "fct_hourly_zone_demand_rows": 4607760,
+    "top50_share_of_clean_pickups": 0.9082553131524623
+  },
+  "dbt_build": {
+    "generated_at": "2026-11-07T13:49:08+00:00",
+    "by_type": {
+      "test": {
+        "pass": 65
+      },
+      "seed": {
+        "success": 1
+      },
+      "model": {
+        "success": 13
+      }
+    },
+    "elapsed_s": 95.13255906105042,
+    "n_tests": 65,
+    "n_tests_passed": 65
+  }
+}

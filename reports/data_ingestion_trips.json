@@ -1,0 +1,177 @@
+{
+  "generated_at": "2026-11-07T13:46:40+00:00",
+  "source": "NYC TLC Trip Record Data (yellow taxi), https://d37ci6vzurychx.cloudfront.net/trip-data",
+  "months": [
+    "2024-10",
+    "2026-09"
+  ],
+  "n_files": 24,
+  "rows_total": 93450512,
+  "bytes_total": 1595328662,
+  "rows_in_duckdb_view": 93450512,
+  "integrity": "Content-Length match + Parquet footer parse; multipart S3 ETags cannot be recomputed locally (etag_verified=null); SHA-256 recorded for idempotent reruns",
+  "schema_changes": [
+    {
+      "month": "2025-01",
+      "added": [
+        "cbd_congestion_fee"
+      ],
+      "removed": [],
+      "retyped": {}
+    },
+    {
+      "month": "2026-06",
+      "added": [
+        "request_source"
+      ],
+      "removed": [],
+      "retyped": {}
+    }
+  ],
+  "per_month": {
+    "2024-10": {
+      "rows": 3833771,
+      "bytes": 64346071,
+      "sha256": "d19fe05aa0b259af24eb47051735293287f1e6dc263ba04030ec1ab4c6ec2650",
+      "last_action": "skipped"
+    },
+    "2024-11": {
+      "rows": 3646369,
+      "bytes": 60658709,
+      "sha256": "5ef321876de5007a7c147a347389133fc94fd7ac28f82eb1d57d8f2cf05cfd3b",
+      "last_action": "skipped"
+    },
+    "2024-12": {
+      "rows": 3668371,
+      "bytes": 61524085,
+      "sha256": "41ebf7db80bebde60c58e5143c14cdf38ad04a0f3e3ff44215b3e240d55f6c78",
+      "last_action": "skipped"
+    },
+    "2025-01": {
+      "rows": 3475226,
+      "bytes": 59158238,
+      "sha256": "9af277e4c0d3f9deb30644da822981e1e7df6af58313170fd3aa8a474485488a",
+      "last_action": "skipped"
+    },
+    "2025-02": {
+      "rows": 3577543,
+      "bytes": 60343086,
+      "sha256": "037cba555a73663f3a51a2c27816e40e3feb364769942bdf122b9da31e377bd3",
+      "last_action": "skipped"
+    },
+    "2025-03": {
+      "rows": 4145257,
+      "bytes": 69964745,
+      "sha256": "20c4b77cce457b7cfdae77c5069ca7dc91c167f876a41467f4502ab69487a186",
+      "last_action": "skipped"
+    },
+    "2025-04": {
+      "rows": 3970553,
+      "bytes": 67352824,
+      "sha256": "6f98938de9380a3f85600533816f0dc0e6d9b5b210e485d623952bac599bbe28",
+      "last_action": "skipped"
+    },
+    "2025-05": {
+      "rows": 4591845,
+      "bytes": 77837865,
+      "sha256": "7ef46bcd0fceee7f8c0bb38a532be05bceefabb512d4bb0b32a7727dd862b15c",
+      "last_action": "skipped"
+    },
+    "2025-06": {
+      "rows": 4322960,
+      "bytes": 73542954,
+      "sha256": "1bea7f5b09c744414451fa7fef09fbc5a393ffb1621c859be6ba0df23a14e1b6",
+      "last_action": "skipped"
+    },
+    "2025-07": {
+      "rows": 3898963,
+      "bytes": 66943728,
+      "sha256": "1efa6a0458dc60341f7f81dcbb5015af731f42d1a109f4e0d594dd46970fd4ef",
+      "last_action": "skipped"
+    },
+    "2025-08": {
+      "rows": 3574091,
+      "bytes": 62293743,
+      "sha256": "b982ace703e3564d92e94edae5ec93515f4f1fb07a5b95e7404c32464c1a6a89",
+      "last_action": "skipped"
+    },
+    "2025-09": {
+      "rows": 4251015,
+      "bytes": 72432945,
+      "sha256": "cd39b9901f01d1fd752d45cbaec91ee5f68c4dddf9e261e938c1dbab404644c7",
+      "last_action": "skipped"
+    },
+    "2025-10": {
+      "rows": 4428699,
+      "bytes": 75267589,
+      "sha256": "e1f63caf331bc6230d9c6f757cb88e55fdc2bddde185fb414d2c947abdc773c3",
+      "last_action": "skipped"
+    },
+    "2025-11": {
+      "rows": 4181444,
+      "bytes": 71134255,
+      "sha256": "2cf2f3127f96d4d5dea30f8afe05119cf8e4ba57bd9e60b789d3f296fc8459ab",
+      "last_action": "skipped"
+    },
+    "2025-12": {
+      "rows": 4305006,
+      "bytes": 73701327,
+      "sha256": "eaba7ff61ebb6453fc6f673fda43d621380307f869b768b124992e8486c785e1",
+      "last_action": "skipped"
+    },
+    "2026-01": {
+      "rows": 3724889,
+      "bytes": 64165080,
+      "sha256": "8b3933fe6f0d7b6d8826613c0dd724edc680ff7c49e2bd4c7635c05102728637",
+      "last_action": "skipped"
+    },
+    "2026-02": {
+      "rows": 3399866,
+      "bytes": 58683353,
+      "sha256": "5352ca800f29c40a221ed5b0c6392c451fde7fcd236a73651bd5aea74713a26c",
+      "last_action": "skipped"
+    },
+    "2026-03": {
+      "rows": 3952451,
+      "bytes": 67891249,
+      "sha256": "d7af794a7ac06cbbb5afb4d1df9e86d84f2e878584de708ff2ffca4bd7d234d9",
+      "last_action": "skipped"
+    },
+    "2026-04": {
+      "rows": 3831240,
+      "bytes": 64818115,
+      "sha256": "e03b82d5722a6b21d4fbce011afd8837495202c0b5db77ff0d8d15dd80834ba8",
+      "last_action": "skipped"
+    },
+    "2026-05": {
+      "rows": 4090836,
+      "bytes": 69699174,
+      "sha256": "9aa5a1609e2bf07d9051b7d530de05b1019e12a560ecb2c59c137c8b3a8b6750",
+      "last_action": "skipped"
+    },
+    "2026-06": {
+      "rows": 3837248,
+      "bytes": 65465637,
+      "sha256": "f340c62a18885c56176433c9db28e97d0a8a14e6e49869276ad8afb20ebf088b",
+      "last_action": "skipped"
+    },
+    "2026-07": {
+      "rows": 3530109,
+      "bytes": 61685033,
+      "sha256": "3260bb629c2f334055f8a566cbb02c15476b15120c45d7ad0aae46fc4bb06612",
+      "last_action": "skipped"
+    },
+    "2026-08": {
+      "rows": 3336716,
+      "bytes": 59043961,
+      "sha256": "6683a025443afcbb28ac4f238fcbb6334767dc69fab4a16b1eb16a78dcd013cd",
+      "last_action": "skipped"
+    },
+    "2026-09": {
+      "rows": 3876044,
+      "bytes": 67374896,
+      "sha256": "32d8d883e3fb9c0d681f4d47b205afe0fcb2a4830739673b4dd3bafbac9b0086",
+      "last_action": "skipped"
+    }
+  }
+}

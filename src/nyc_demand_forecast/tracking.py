@@ -15,7 +15,7 @@ def tracking_uri() -> str:
     return os.environ.get("MLFLOW_TRACKING_URI", f"sqlite:///{config.MLFLOW_DB.resolve().as_posix()}")
 
 
-def setup():  # noqa: ANN201 - returns the mlflow module
+def setup():
     os.environ.setdefault("MLFLOW_DISABLE_AGENT_HINT", "1")
     import mlflow
 
@@ -40,7 +40,7 @@ def _flat(prefix: str, d: dict[str, Any]) -> dict[str, Any]:
 
 
 @contextmanager
-def run(name: str, params: dict[str, Any] | None = None, tags: dict[str, str] | None = None):  # noqa: ANN201
+def run(name: str, params: dict[str, Any] | None = None, tags: dict[str, str] | None = None):
     mlflow = setup()
     with mlflow.start_run(run_name=name, tags=tags) as active:
         if params:
@@ -48,6 +48,6 @@ def run(name: str, params: dict[str, Any] | None = None, tags: dict[str, str] | 
         yield mlflow, active
 
 
-def log_metrics(mlflow, metrics: dict[str, Any], prefix: str = "") -> None:  # noqa: ANN001
+def log_metrics(mlflow, metrics: dict[str, Any], prefix: str = "") -> None:
     flat = {k: float(v) for k, v in _flat(prefix, metrics).items() if isinstance(v, int | float)}
     mlflow.log_metrics({k.replace("%", "pct"): v for k, v in flat.items()})

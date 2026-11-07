@@ -109,12 +109,12 @@ def rolling_origin(
 # --------------------------------------------------------------------------------------------
 
 def lgbm_fit_predict(cfg: models.LGBMConfig) -> tuple[FitFn, PredictFn]:
-    def fit(train: pd.DataFrame):  # noqa: ANN202
+    def fit(train: pd.DataFrame):
         fcst = models.make_mlforecast(cfg)
         fcst.fit(train, static_features=["zone"])
         return fcst
 
-    def predict(fcst, hist: pd.DataFrame, future_exog: pd.DataFrame) -> pd.DataFrame:  # noqa: ANN001
+    def predict(fcst, hist: pd.DataFrame, future_exog: pd.DataFrame) -> pd.DataFrame:
         p = fcst.predict(h=len(future_exog["ds"].unique()), new_df=hist, X_df=future_exog)
         return p.rename(columns={"lgbm": "y_hat"})[["unique_id", "ds", "y_hat"]]
 
@@ -141,7 +141,7 @@ def run_seasonal_naive(frame: pd.DataFrame, folds: list[Fold], season: int) -> p
     def fit(train: pd.DataFrame) -> None:
         return None
 
-    def predict(_model, hist: pd.DataFrame, future_exog: pd.DataFrame) -> pd.DataFrame:  # noqa: ANN001
+    def predict(_model, hist: pd.DataFrame, future_exog: pd.DataFrame) -> pd.DataFrame:
         p = future_exog[["unique_id", "ds"]].merge(shifted, on=["unique_id", "ds"], how="left")
         if p["y_hat"].isna().any():
             raise ValueError("seasonal naive needs at least `season` hours of history")
@@ -153,32 +153,43 @@ def run_seasonal_naive(frame: pd.DataFrame, folds: list[Fold], season: int) -> p
 
 
 def run_mstl(frame: pd.DataFrame, folds: list[Fold], input_weeks: int = 8, n_jobs: int = 4) -> pd.DataFrame:
-    """MSTL (daily + weekly seasonality, AutoETS trend) refit at every daily origin on the last
-    ``input_weeks`` weeks, via statsforecast's cross-validation over the same origins."""
+    """MSTL (daily + weekly seasonality, AutoETS trend), fitted ONCE per weekly fold on the last
+    ``input_weeks`` weeks and forecasting the whole week (h = 168).
+
+    Cost note: one MSTL fit takes ~0.5-0.8 s per series on this laptop and ``forward`` (re-using a
+    fit on new data) costs the same, so daily refits over 51 series x 84 origins were too slow for
+    the pipeline. Consequently MSTL's forecast for day k of a fold has a k-day lead (1-7 days),
+    i.e. it is disadvantaged versus the day-ahead models on days 2-7; ``lead_days`` records this
+    so the fair day-1-only comparison can be reported separately.
+    """
     from statsforecast import StatsForecast
     from statsforecast.models import MSTL, AutoETS
 
-    cutoffs = [c for f in folds for c in f.cutoffs]
-    end = cutoffs[-1] + 24 * HOUR
+    week = 168
+    starts = [f.refit_cutoff for f in folds]
+    end = starts[-1] + week * HOUR
     data = frame.loc[frame["ds"] <= end, ["unique_id", "ds", "y"]]
     sf = StatsForecast(
-        models=[MSTL(season_length=[24, 168], trend_forecaster=AutoETS(model="ZZN"), alias="mstl")],
+        models=[MSTL(season_length=[24, week], trend_forecaster=AutoETS(model="ZZN"), alias="mstl")],
         freq="h",
         n_jobs=n_jobs,
     )
-    cv = sf.cross_validation(df=data, h=24, step_size=24, n_windows=len(cutoffs),
-                             input_size=input_weeks * 168)
-    cv = cv.rename(columns={"mstl": "y_hat"})
-    got = sorted(pd.to_datetime(cv["cutoff"].unique()))
-    if [pd.Timestamp(c) for c in got] != cutoffs:
-        raise AssertionError("statsforecast cutoffs do not match the backtest origins")
-    fold_of = {c: (f.fold, f.phase, f.refit_cutoff) for f in folds for c in f.cutoffs}
-    cv["fold"] = cv["cutoff"].map(lambda c: fold_of[pd.Timestamp(c)][0])
-    cv["phase"] = cv["cutoff"].map(lambda c: fold_of[pd.Timestamp(c)][1])
+    cv = sf.cross_validation(df=data, h=week, step_size=week, n_windows=len(folds),
+                             input_size=input_weeks * week)
+    cv["cutoff"] = pd.to_datetime(cv["cutoff"])
+    if sorted(cv["cutoff"].unique()) != sorted(starts):
+        raise AssertionError("statsforecast cutoffs do not match the fold starts")
+    fold_of = {f.refit_cutoff: f for f in folds}
     cv["refit_cutoff"] = cv["cutoff"]
-    cv["y_hat"] = cv["y_hat"].clip(lower=0)
+    lead = ((cv["ds"] - cv["refit_cutoff"]) / HOUR - 1).astype(int) // 24  # 0..6
+    cv["lead_days"] = lead + 1
+    # Re-key each row to the daily origin it is scored against, so rows align with other models.
+    cv["cutoff"] = cv["refit_cutoff"] + pd.to_timedelta(lead * 24, unit="h")
+    cv["fold"] = cv["refit_cutoff"].map(lambda c: fold_of[c].fold)
+    cv["phase"] = cv["refit_cutoff"].map(lambda c: fold_of[c].phase)
+    cv["y_hat"] = cv["mstl"].clip(lower=0)
     cv["model"] = "mstl"
-    return cv[["unique_id", "ds", "y_hat", "y", "cutoff", "fold", "phase", "refit_cutoff", "model"]]
+    return cv[["unique_id", "ds", "y_hat", "y", "cutoff", "fold", "phase", "refit_cutoff", "model", "lead_days"]]
 
 
 def horizon_step(pred: pd.DataFrame) -> pd.Series:
@@ -202,5 +213,5 @@ def assert_backtest_causal(pred: pd.DataFrame) -> dict[str, int]:
     bad_step = int(((steps < 1) | (steps > 24)).sum())
     if bad_target or bad_refit or bad_step:
         raise AssertionError(f"causality violated: target={bad_target} refit={bad_refit} step={bad_step}")
-    return {"rows_checked": int(len(pred)), "violations": 0,
+    return {"rows_checked": len(pred), "violations": 0,
             "max_horizon_h": int(steps.max()), "min_horizon_h": int(steps.min())}

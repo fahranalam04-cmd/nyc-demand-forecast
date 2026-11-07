@@ -67,7 +67,7 @@ def feature_psi(ref: pd.DataFrame, cur: pd.DataFrame, columns: list[str]) -> pd.
 TRIP_ATTRIBUTES = ["trip_distance_mi", "fare_amount", "total_amount", "duration_min"]
 
 
-def trip_attribute_psi_by_month(con, baseline_months: tuple[str, str], columns: list[str] | None = None,  # noqa: ANN001
+def trip_attribute_psi_by_month(con, baseline_months: tuple[str, str], columns: list[str] | None = None,
                                 n_bins: int = 10) -> pd.DataFrame:
     """Monthly PSI of clean-trip attributes vs a baseline window, computed in DuckDB.
 

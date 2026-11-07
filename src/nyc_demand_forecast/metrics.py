@@ -52,7 +52,7 @@ def summarize(pred: pd.DataFrame, scale: pd.Series, model_col: str = "model") ->
                 "wape": wape(g["y"], g["y_hat"]),
                 "mase": float(per_series["mase"].mean()),
                 "smape": smape(g["y"], g["y_hat"]),
-                "n_points": int(len(g)),
+                "n_points": len(g),
                 "n_series": int(g["unique_id"].nunique()),
             }
         )

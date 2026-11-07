@@ -13,7 +13,7 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
-from nyc_demand_forecast import backtest, conformal, config, drift, features, metrics, models, plots, tracking
+from nyc_demand_forecast import backtest, config, conformal, drift, features, metrics, models, plots, tracking
 from nyc_demand_forecast.ingest import tlc, warehouse, weather
 
 log = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ def write_report(name: str, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, default=_json_default) + "\n")
 
 
-def _json_default(o: Any) -> Any:  # noqa: ANN401
+def _json_default(o: Any) -> Any:
     if isinstance(o, np.integer | np.floating):
         return o.item()
     if isinstance(o, pd.Timestamp | datetime):
@@ -294,22 +294,27 @@ def run_backtest(df: pd.DataFrame | None = None, include_mstl: bool = True) -> d
         merged = per_series.merge(per_series_sn, on="unique_id", suffixes=("_lgbm", "_sn168"))
         lg_test = lg[lg["phase"] == "test"]
         by_hour = lg_test.assign(hour=lg_test["ds"].dt.hour)
-        cov_by_hour = {
-            str(lvl): by_hour.assign(inside=(by_hour["y"] >= by_hour[f"lo_{lvl}"]) & (by_hour["y"] <= by_hour[f"hi_{lvl}"]))
-            .groupby("hour")["inside"].mean().round(4).to_dict()
-            for lvl in levels
-        }
+        cov_by_hour = {}
+        for lvl in levels:
+            inside = (by_hour["y"] >= by_hour[f"lo_{lvl}"]) & (by_hour["y"] <= by_hour[f"hi_{lvl}"])
+            cov_by_hour[str(lvl)] = inside.groupby(by_hour["hour"]).mean().round(4).to_dict()
+        day1 = None
+        if include_mstl:
+            # Fair subset: the first origin of each fold, where MSTL is genuinely day-ahead.
+            first = test_pred["cutoff"].isin([f.refit_cutoff for f in test])
+            day1 = metrics.summarize(test_pred[first], scale).to_dict(orient="records")
         report["groups"][group] = {
             "model_config": cfg.to_dict(),
+            "test_metrics_first_origin_of_each_fold": day1,
             "n_series": int(gdf["unique_id"].nunique()),
             "test_metrics": summary.to_dict(orient="records"),
             "lgbm_vs_seasonal_naive_168h": {
                 "wape_relative_improvement": float(1 - lgb_row["wape"] / sn["wape"]),
                 "mase_relative_improvement": float(1 - lgb_row["mase"] / sn["mase"]),
                 "folds_won_wape": int((wk["lgbm"] < wk["seasonal_naive_168h"]).sum()),
-                "n_folds": int(len(wk)),
+                "n_folds": len(wk),
                 "series_won_wape": int((merged["wape_lgbm"] < merged["wape_sn168"]).sum()),
-                "n_series": int(len(merged)),
+                "n_series": len(merged),
             },
             "intervals": conformal.coverage_report(lg_test, levels),
             "interval_coverage_by_hour": cov_by_hour,
@@ -359,7 +364,7 @@ def train_final(df: pd.DataFrame | None = None) -> dict[str, Any]:
         imp = (imp / imp.sum()).sort_values(ascending=False)
         report["groups"][group] = {
             "config": cfg.to_dict(),
-            "train_rows": int(len(mf)),
+            "train_rows": len(mf),
             "train_end": str(mf["ds"].max()),
             "fit_seconds": round(fit_s, 1),
             "model_path": str(path),
@@ -422,15 +427,15 @@ def drift_monitoring(df: pd.DataFrame | None = None) -> dict[str, Any]:
         "generated_at": _now(),
         "thresholds": {"moderate": drift.MODERATE, "significant": drift.SIGNIFICANT},
         "feature_drift": {
-            "reference": f"model features, {ref['ds'].min()} .. {test_start} (training window of the test-period model)",
+            "reference": f"model features {ref['ds'].min()} .. {test_start} (test-period training window)",
             "current": f"{latest_month_start.date()} .. {last}",
-            "n_features": int(len(fpsi)),
+            "n_features": len(fpsi),
             "n_significant": int((fpsi["level"] == "significant").sum()),
             "n_moderate": int((fpsi["level"] == "moderate").sum()),
             "top": fpsi.head(8).to_dict(orient="records"),
         },
         "target_drift_per_zone": {
-            "n_zones": int(len(target_psi)),
+            "n_zones": len(target_psi),
             "n_significant": int((target_psi["psi"] >= drift.SIGNIFICANT).sum()),
             "n_moderate": int(((target_psi["psi"] >= drift.MODERATE) & (target_psi["psi"] < drift.SIGNIFICANT)).sum()),
             "median_psi": float(target_psi["psi"].median()),

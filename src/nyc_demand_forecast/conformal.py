@@ -80,6 +80,6 @@ def coverage_report(pred: pd.DataFrame, levels: tuple[int, ...] = (80, 95)) -> d
             "nominal": lvl / 100,
             "empirical_coverage": float(inside.mean()),
             "median_relative_width": float(width.median()),
-            "n": int(len(pred)),
+            "n": len(pred),
         }
     return report

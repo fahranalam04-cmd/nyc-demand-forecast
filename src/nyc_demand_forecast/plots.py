@@ -8,8 +8,8 @@ from pathlib import Path
 import matplotlib
 
 matplotlib.use("Agg")
-import matplotlib.pyplot as plt  # noqa: E402
-import pandas as pd  # noqa: E402
+import matplotlib.pyplot as plt
+import pandas as pd
 
 SURFACE = "#fcfcfb"
 TEXT = "#0b0b0b"
@@ -44,7 +44,7 @@ def _style(ax: plt.Axes) -> None:
     ax.set_axisbelow(True)
 
 
-def _fig(width: float, height: float, nrows: int = 1):  # noqa: ANN202
+def _fig(width: float, height: float, nrows: int = 1):
     fig, axes = plt.subplots(nrows, 1, figsize=(width, height), dpi=110, facecolor=SURFACE)
     return fig, axes
 

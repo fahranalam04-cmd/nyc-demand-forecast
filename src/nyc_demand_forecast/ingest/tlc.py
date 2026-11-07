@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import itertools
 import json
 import logging
 from datetime import UTC, datetime
@@ -131,7 +132,7 @@ def ingest_zone_lookup() -> dict[str, Any]:
 def schema_changes(manifest: dict[str, Any], months: list[str]) -> list[dict[str, Any]]:
     """Columns added/removed/retyped between consecutive months (upstream schema drift)."""
     changes = []
-    for prev, cur in zip(months, months[1:], strict=False):
+    for prev, cur in itertools.pairwise(months):
         a, b = manifest[prev]["columns"], manifest[cur]["columns"]
         added = sorted(set(b) - set(a))
         removed = sorted(set(a) - set(b))

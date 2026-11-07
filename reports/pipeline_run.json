@@ -1,0 +1,8 @@
+{
+  "started_at": "2026-11-07T13:43:55+00:00",
+  "select": "*",
+  "exit_code": 2,
+  "wall_clock_s": 23.0,
+  "hardware": "i7-11800H laptop, CPU only, 4 threads, DuckDB 3 GB / dbt 2.5 GB memory caps",
+  "step_stats_error": "IndexError('list index out of range')"
+}

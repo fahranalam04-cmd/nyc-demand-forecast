@@ -1,0 +1,25 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      OMP_NUM_THREADS: "2"
+      MLFLOW_DISABLE_AGENT_HINT: "1"
+      DBT_SEND_ANONYMOUS_USAGE_STATS: "false"
+      ML_DATA_ROOT: ${{ github.workspace }}/.ci-data
+      ML_MODELS_ROOT: ${{ github.workspace }}/.ci-models
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv sync --frozen
+      - run: uv run ruff check src tests
+      - run: uv run pytest
+      # Compiles every model, test and macro without touching data.
+      - run: uv run dbt parse --project-dir dbt --profiles-dir dbt
