@@ -1,0 +1,131 @@
+version: 2
+
+models:
+  - name: fct_hourly_zone_demand
+    description: >
+      Forecasting target. Dense grid of every modelable taxi zone x every NYC local hour in the
+      study window; `pickups` = number of clean yellow-taxi trips whose meter started in that zone
+      during that hour (0 when none). Grain: (zone_id, hour_ts).
+    data_tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ["zone_id", "hour_ts"]
+      - complete_hourly_series:
+          arguments:
+            timestamp_column: hour_ts
+            partition_by: zone_id
+      - row_count_between:
+          arguments:
+            min_rows: 4000000
+            max_rows: 5000000
+    columns:
+      - name: zone_id
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_zones')
+                field: zone_id
+      - name: hour_ts
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar_hourly')
+                field: hour_ts
+      - name: pickups
+        description: Clean pickups in the zone-hour (target variable).
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 5000
+      - name: avg_trip_distance_mi
+        description: Mean trip distance of the hour's pickups (null when pickups = 0).
+      - name: avg_fare_amount
+        description: Mean fare of the hour's pickups (null when pickups = 0).
+
+  - name: dim_zones
+    description: Modelable TLC taxi zones with total clean pickups and volume rank (1 = busiest).
+    columns:
+      - name: zone_id
+        data_tests: [unique, not_null]
+      - name: volume_rank
+        data_tests: [unique, not_null]
+      - name: clean_pickups
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: dim_calendar_hourly
+    description: >
+      NYC local hours in the window with day-of-week, weekend, US federal holiday (observed) and
+      DST flags. The spring-forward gap hour (02:00 local) exists in the spine but no trips or
+      weather can occur in it; the fall-back hour (01:00) spans two real hours.
+    columns:
+      - name: hour_ts
+        data_tests: [unique, not_null]
+      - name: hour_of_day
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 23
+      - name: day_of_week
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [1, 2, 3, 4, 5, 6, 7]
+      - name: n_utc_hours
+        description: Real hours mapped onto this local hour (0 = DST gap, 2 = DST repeat).
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [0, 1, 2]
+
+  - name: dim_weather_hourly
+    description: >
+      Hourly weather per NYC local hour: observed (`temp_c`, `precip_mm`, ...; for analysis and
+      drift monitoring only) and day-2-ahead forecasts (`fcst_*`; the only weather the model sees).
+    columns:
+      - name: hour_ts
+        data_tests:
+          - unique
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_calendar_hourly')
+                field: hour_ts
+      - name: temp_c
+        data_tests: [not_null]
+      - name: fcst_temp_c
+        data_tests: [not_null]
+      - name: fcst_precip_mm
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 100
+
+  - name: rpt_trip_quality
+    description: Raw rows, rows removed by each quality rule, and clean rows per source month.
+    columns:
+      - name: source_month
+        data_tests: [unique, not_null]
+      - name: rows_clean
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 1000000
+
+  - name: rpt_vendor_anomalies
+    description: >
+      Per month x vendor counts of the reporting quirks that shaped the quality rules
+      (zero-duration records, negative fare with positive total, negative totals, Flex Fare).
+    data_tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ["source_month", "vendor_id"]

@@ -1,0 +1,61 @@
+version: 2
+
+sources:
+  - name: raw
+    description: >
+      Files landed by the Python ingestion step and registered in DuckDB's `raw` schema.
+      Trip data is a zero-copy view over the monthly Parquet files on disk.
+    schema: raw
+    tables:
+      - name: yellow_tripdata
+        description: >
+          NYC TLC Yellow Taxi trip records, one Parquet file per month
+          (https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page). `filename` is added by
+          read_parquet and identifies the source month. Columns are unioned by name because the
+          schema drifts (cbd_congestion_fee from 2025-01, request_source from 2026-06).
+        meta:
+          dagster:
+            asset_key: ["raw_tlc_trip_files"]
+        loaded_at_field: tpep_pickup_datetime
+        config:
+          freshness:
+            # TLC publishes with a ~6-8 week lag; >75 days since the last real pickup means the
+            # feed (or our ingestion) has stalled. Future-dated garbage timestamps are excluded.
+            warn_after: {count: 75, period: day}
+            error_after: {count: 120, period: day}
+            filter: "tpep_pickup_datetime <= current_timestamp"
+        data_tests:
+          - row_count_between:
+              arguments:
+                min_rows: 50000000
+        columns:
+          - name: tpep_pickup_datetime
+            data_tests: [not_null]
+          - name: PULocationID
+            data_tests: [not_null]
+      - name: taxi_zone_lookup
+        description: TLC taxi zone lookup (LocationID -> borough, zone, service zone).
+        meta:
+          dagster:
+            asset_key: ["raw_taxi_zone_lookup"]
+        columns:
+          - name: LocationID
+            data_tests: [unique, not_null]
+      - name: weather_observed
+        description: Open-Meteo Historical Weather API (reanalysis), hourly, GMT timestamps.
+        meta:
+          dagster:
+            asset_key: ["raw_weather"]
+        columns:
+          - name: time_utc
+            data_tests: [unique, not_null]
+      - name: weather_forecast_d2
+        description: >
+          Open-Meteo Previous Runs API `*_previous_day2` variables: the forecast for each hour
+          issued by the model run ~48 h earlier, i.e. information available at forecast time.
+        meta:
+          dagster:
+            asset_key: ["raw_weather"]
+        columns:
+          - name: time_utc
+            data_tests: [unique, not_null]

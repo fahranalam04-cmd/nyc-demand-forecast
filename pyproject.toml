@@ -1,0 +1,39 @@
+[project]
+name = "nyc-demand-forecast"
+version = "0.1.0"
+description = "Orchestrated dbt + DuckDB + Dagster pipeline forecasting hourly NYC taxi demand by zone, with data-quality tests, rolling backtests and drift monitoring"
+readme = "README.md"
+authors = [
+    { name = "Fahran Alam" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "dagster>=1.13.29",
+    "dagster-dbt>=0.29.29",
+    "dagster-webserver>=1.13.29",
+    "dbt-core>=1.10",
+    "dbt-duckdb>=1.9",
+    "duckdb>=2.0.0",
+    "holidays>=0.108",
+    "lightgbm>=4.7.0",
+    "matplotlib>=3.11.2",
+    "mlflow>=3.18.0",
+    "mlforecast>=1.1.0",
+    "pandas>=2.3.3",
+    "pyarrow>=26.0.1",
+    "requests>=2.34.2",
+    "statsforecast>=2.1.1",
+]
+
+[project.scripts]
+nyc-demand-forecast = "nyc_demand_forecast:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.2.0",
+    "ruff>=0.17.4",
+]

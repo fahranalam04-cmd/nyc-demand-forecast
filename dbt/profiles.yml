@@ -1,0 +1,17 @@
+nyc_demand_forecast:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      # Set by the Python pipeline (nyc_demand_forecast.config); falls back to $ML_DATA_ROOT.
+      path: "{{ env_var('FORECAST_DUCKDB_PATH', env_var('ML_DATA_ROOT', '../data') ~ '/forecast/warehouse.duckdb') }}"
+      threads: 2
+      # Applied once when the database is opened (DuckDB refuses to change temp_directory later).
+      config_options:
+        temp_directory: "{{ env_var('FORECAST_DUCKDB_TEMP_DIR', env_var('ML_DATA_ROOT', '../data') ~ '/forecast/duckdb_tmp') }}"
+      # Applied to every cursor. Shared laptop: keep dbt well under the ~3.5 GB project budget.
+      settings:
+        memory_limit: "{{ env_var('FORECAST_DBT_MEMORY_LIMIT', '2500MB') }}"
+        threads: 4
+        preserve_insertion_order: false
+        enable_progress_bar: false

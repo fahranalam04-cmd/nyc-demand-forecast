@@ -1,0 +1,65 @@
+version: 2
+
+models:
+  - name: int_trips__validated
+    description: |
+      One row per *distinct* raw trip record (exact duplicates collapsed, `n_copies` keeps the
+      multiplicity) with `failed_rule` = the first quality rule the record fails, or null.
+      Rules, in evaluation order:
+        1. pickup_outside_file_month - pickup timestamp missing or outside the month of its file
+           (TLC files contain stray records dated years away).
+        2. invalid_duration - dropoff missing, before pickup, more than `max_trip_hours` after
+           it, or equal to pickup with zero distance. (dropoff == pickup with a positive distance
+           is a broken dropoff clock - every record from vendor 7 - and the pickup is kept.)
+        3. negative_amount - total_amount < 0 (refund / void adjustment rows; the original trip
+           is kept). Flex Fare trips (payment_type 0) report a negative fare_amount with a
+           positive total and are NOT removed.
+        4. unknown_pickup_zone - pickup zone not a modelable TLC zone (264/265 or not in lookup).
+        5. implausible_distance - trip distance missing, negative, or > `max_trip_miles`.
+    columns:
+      - name: n_copies
+        description: Number of identical raw records collapsed into this row.
+        data_tests:
+          - not_null
+          - accepted_range:
+              arguments:
+                min_value: 1
+                max_value: 10
+      - name: failed_rule
+        description: First failed quality rule, null when the record is clean.
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["pickup_outside_file_month", "invalid_duration", "negative_amount", "unknown_pickup_zone", "implausible_distance"]
+              config:
+                where: "failed_rule is not null"
+
+  - name: int_trips__clean
+    description: Trips that pass every quality rule; the population demand is counted from.
+    columns:
+      - name: pickup_zone_id
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('dim_zones')
+                field: zone_id
+      - name: duration_min
+        description: Trip duration in minutes; null when the dropoff clock is unusable.
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+                max_value: 360
+                inclusive: true
+      - name: total_amount
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: 0
+
+  - name: int_demand__zone_hour_counts
+    description: Sparse (zone, hour) pickup counts from clean trips.
+    data_tests:
+      - unique_combination_of_columns:
+          arguments:
+            combination_of_columns: ["zone_id", "hour_ts"]

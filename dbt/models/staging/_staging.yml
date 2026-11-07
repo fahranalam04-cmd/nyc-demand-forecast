@@ -1,0 +1,62 @@
+version: 2
+
+models:
+  - name: stg_tlc__yellow_trips
+    description: >
+      Raw trip records renamed and cast to stable types. Row count equals the source exactly
+      (checked by assert_staging_preserves_rows); quality filtering happens downstream.
+    columns:
+      - name: pickup_at
+        description: Meter engaged time, naive NYC local time (TLC convention).
+        data_tests: [not_null]
+      - name: dropoff_at
+        description: Meter disengaged time, naive NYC local time.
+      - name: pickup_zone_id
+        description: TLC taxi zone where the meter was engaged (PULocationID).
+        data_tests: [not_null]
+      - name: trip_distance_mi
+        description: Trip distance in miles reported by the taximeter.
+      - name: fare_amount
+        description: Time-and-distance fare (USD). Negative values are refunds / voids.
+      - name: total_amount
+        description: Total charged to the passenger (USD), excluding cash tips.
+      - name: source_month
+        description: First day of the month of the Parquet file the record came from.
+        data_tests: [not_null]
+
+  - name: stg_tlc__taxi_zones
+    description: TLC taxi zones (263 real zones + 264 Unknown + 265 Outside of NYC).
+    columns:
+      - name: zone_id
+        data_tests: [unique, not_null]
+      - name: borough
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ["Bronx", "Brooklyn", "EWR", "Manhattan", "Queens", "Staten Island", "Unknown", "N/A"]
+      - name: is_modelable
+        description: False for 264/265 (unknown / outside NYC); these zones get no forecast.
+
+  - name: stg_open_meteo__weather_observed
+    description: Observed hourly weather (Open-Meteo reanalysis) on the NYC local-hour grid.
+    columns:
+      - name: hour_ts
+        data_tests: [unique, not_null]
+      - name: temp_c
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -30
+                max_value: 45
+
+  - name: stg_open_meteo__weather_forecast
+    description: Day-2-ahead forecast weather on the NYC local-hour grid.
+    columns:
+      - name: hour_ts
+        data_tests: [unique, not_null]
+      - name: fcst_temp_c
+        data_tests:
+          - accepted_range:
+              arguments:
+                min_value: -30
+                max_value: 45

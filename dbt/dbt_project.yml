@@ -1,0 +1,43 @@
+name: nyc_demand_forecast
+version: "1.0.0"
+config-version: 2
+profile: nyc_demand_forecast
+
+model-paths: ["models"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages", "logs"]
+
+vars:
+  # Study window (inclusive months). The Python pipeline passes the same values via --vars.
+  start_month: "2024-10"
+  end_month: "2026-09"
+  # Plausibility bounds used by the trip-quality rules (documented in models/intermediate).
+  max_trip_hours: 6
+  max_trip_miles: 100
+  unknown_zone_ids: [264, 265]
+
+models:
+  nyc_demand_forecast:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      +schema: marts
+
+seeds:
+  nyc_demand_forecast:
+    +schema: seeds
+    us_federal_holidays:
+      +column_types:
+        holiday_date: date
+        holiday_name: varchar
+
+data_tests:
+  +severity: error

@@ -1,0 +1,29 @@
+# Python / uv
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+
+# dbt build output
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+dbt/.user.yml
+/logs/
+
+# Data, models and run state live on the data drive, never in git
+/data/
+/models/
+mlruns/
+mlartifacts/
+*.duckdb
+*.duckdb.wal
+*.parquet
+*.pkl
+.dagster_home/
+tmp*/
+
+# Large generated HTML reports
+reports/*.html
