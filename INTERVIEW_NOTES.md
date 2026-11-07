@@ -6,11 +6,12 @@ All numbers below come from `reports/*.json` and are produced by the pipeline in
 
 - **DuckDB over Parquet, not a raw table load.** The raw layer is a view over the 24 monthly
   files (`read_parquet(..., union_by_name=true, filename=true)`). DuckDB pushes projections and
-  filters into Parquet, so a full 93M-row scan takes about 4 s and nothing has to fit in RAM.
+  filters into Parquet, so scans over all 93M rows never have to fit in RAM.
   `union_by_name` absorbs the upstream schema drift: `cbd_congestion_fee` appears in 2025-01 and
   `request_source` in 2026-06 (`reports/data_ingestion_trips.json → schema_changes`).
 - **One materialised validated-trip table.** Dedup (a GROUP BY over 11 columns) plus rule tagging
-  over 93M rows is the only expensive step (about 50 s, spilling to disk under a 2.5 GB cap).
+  over 93M rows is the most expensive SQL step (it spills to disk under a 2.5 GB cap; the whole
+  dbt build takes 95 s, `reports/dbt_build.json → elapsed_s`).
   Doing it once in `int_trips__validated` means the demand fact, the quality report and the tests
   all read the same tagged rows. Each record gets the *first* rule it fails, so the per-rule
   counts add up exactly; `assert_quality_rules_reconcile` checks this and ties the total back to
@@ -19,8 +20,9 @@ All numbers below come from `reports/*.json` and are produced by the pipeline in
   dropoff = pickup on all 951,144 of its records, and 935,785 of them have a real distance. Vendor 2
   Flex Fare trips (payment_type 0) carried a negative `fare_amount` with a positive total on
   1,914,022 rows through 2025-11. Those are real pickups. The obvious `duration <= 0 or
-  fare < 0` filter deleted 6-8% of demand during 2025 and then stopped, which would have put an
-  artificial level shift into the target. The rules now remove only negative *totals* and
+  fare < 0` filter would have removed 5.4-7.85% of each month's trips from 2025-05 to 2025-11 and
+  about 1.2% a month from 2025-12, an artificial level shift in the target
+  (`reports/data_quality.json → vendor_anomalies.naive_filter_extra_removed_pct_by_month`). The rules now remove only negative *totals* and
   zero-duration records with zero distance. A new test, `assert_no_vendor_month_mostly_removed`,
   fails if any rule removes more than half of a vendor's month.
 - **Dagster software-defined assets + dagster-dbt.** Each dbt model is its own asset, and dbt
@@ -48,7 +50,7 @@ All numbers below come from `reports/*.json` and are produced by the pipeline in
   window) and causal by construction (tested).
 - **PSI drift in two places.** The model feature matrix is compared from the training window to
   the latest month. Raw trip attributes are binned and counted inside DuckDB per month against a
-  fixed baseline quarter, so the 92M clean trips never leave the warehouse.
+  fixed baseline quarter, so the 91.86M clean trips never leave the warehouse.
 
 ## What I tried that didn't work
 
@@ -60,16 +62,17 @@ All numbers below come from `reports/*.json` and are produced by the pipeline in
   response (GMT-5 even for EDT dates). I now request GMT and convert in dbt with ICU
   (`to_nyc_local` macro). `assert_weather_forecast_aligned` would catch a 1-hour slip: it fails if
   the forecast matches the observations better at ±1 h than at 0 h.
-- **Daily-refit MSTL baseline.** One MSTL fit costs about 0.5-0.8 s per series, and statsforecast's
-  `forward` costs the same because it re-decomposes. 51 series × 84 origins would have taken
-  roughly 25 minutes per run. MSTL is now fitted once per weekly fold and forecasts the whole week
+- **Daily-refit MSTL baseline.** Fitting once per weekly fold already takes 201.7 s for the 50
+  zones (`reports/backtest_metrics.json → timings_s.zones_mstl_s`); daily refits are 7× the fits,
+  and statsforecast's `forward` costs about as much because it re-decomposes the series. MSTL is now fitted once per weekly fold and forecasts the whole week
   (1-7 day leads), labelled as such, and I also report the fair day-1-only subset.
 - **`--select "*"` on Windows.** Click glob-expands CLI arguments on Windows, even through
   `python -m dagster` and even when quoted. The fix is an explicit `full_pipeline` asset job.
 - **dbt-duckdb `settings: temp_directory`.** It is re-applied to every cursor and DuckDB refuses to
   change it once it has spilled. It moved to `config_options`.
-- **The first dbt build failed `assert_removed_share_within_budget`** (2025-11 lost 11.2% of rows).
-  That failure is what led to the vendor profiling above. After the fix the worst month is 3.3%.
+- **The first dbt build failed `assert_removed_share_within_budget`** (2025-11 was over
+  the 10% budget). That failure is what led to the vendor profiling above. After the fix the worst
+  month is 3.32% (`reports/data_quality.json → max_monthly_pct_removed`).
 
 ## Known weaknesses
 
@@ -85,19 +88,53 @@ All numbers below come from `reports/*.json` and are produced by the pipeline in
 
 ## Likely interview questions
 
-1. **How do you know there is no leakage?** <!-- Q1 -->
+1. **How do you know there is no leakage?** Three layers. By construction: the origin is 23:00,
+   every lag and rolling window starts at lag ≥ 24 h, weather inputs are day-2 forecasts issued
+   before the origin, and holiday flags are calendar facts. By test:
+   `test_features_at_t_only_use_data_up_to_the_origin` overwrites every target after t0 with random
+   values and asserts the features of all target hours ≤ t0 + 24 h are identical, and that the next
+   hour does change, so the test can fail. A spy model checks that training never sees rows past the
+   refit cutoff and that `predict` never receives `y`. At run time: every fold asserts its bounds,
+   and the `backtest_is_causal` asset check audits all 504,000 zone prediction rows, with 0
+   violations (`reports/backtest_metrics.json → groups.zones.causality_audit`). Model choice used
+   only the 4 validation weeks before the test.
 2. **Why WAPE, MASE and sMAPE together?** WAPE is volume-weighted, which is what an operator
    feels in total misallocated cabs. MASE scales each zone's MAE by its own in-sample seasonal-naive
    error, so it compares zones of different size and is directly "skill vs naive". sMAPE is bounded
    but unstable near zero (0/0 is defined as 0), which is why it is reported and not optimised.
-3. **What did the data-quality layer actually catch?** <!-- Q3 -->
-4. **How are the prediction intervals built and are they calibrated?** <!-- Q4 -->
+3. **What did the data-quality layer actually catch?** 1,595,111 of 93,450,512 rows (1.71%),
+   mostly negative totals (1,342,398) and unknown zones 264/265 (185,895)
+   (`reports/data_quality.json → totals`). The bigger catch was my own first rule set: the
+   removed-share budget test failed on 2025-11, which exposed the vendor 7 and Flex Fare quirks.
+   It also records two upstream schema changes, and `assert_weather_forecast_aligned` guards
+   against a one-hour time-zone slip in the weather join.
+4. **How are the prediction intervals built and are they calibrated?** Split-conformal on the
+   score |y − ŷ| / √(ŷ + 1), using the trailing 28 days of out-of-sample residuals known at each
+   origin, so the width scales with the forecast level. Marginal coverage is 0.7992 / 0.9484 for
+   the 80 / 95% bands over 100,800 zone-hours, and 0.8036 / 0.9499 citywide. It is not
+   conditionally calibrated: the 80% band covers 0.686 at 18:00 and 0.907 at 04:00
+   (`→ groups.zones.interval_coverage_by_hour`). Next step: Mondrian conformal by hour of day, or
+   quantile LightGBM.
 5. **Why a global LightGBM across zones instead of 50 models?** One model shares hour-of-week
    and holiday structure across zones, needs 12 weekly fits instead of 600, and lets low-volume
    zones borrow strength. The Tweedie/Poisson objectives handle the different scales without target
-   scaling. The citywide total is modelled separately because it is about 50× larger than any zone.
-6. **Did weather help?** <!-- Q6 -->
-7. **How would you detect that the model needs retraining?** <!-- Q7 -->
+   scaling. The citywide total is modelled separately because its mean is about 24× the busiest zone's
+   (JFK, z132) in the test window (`reports/backtest_per_series_*.csv → mean_y_lgbm`).
+6. **Did weather help?** Barely. On the validation weeks the zone model was 0.1458 WAPE without
+   weather and 0.1461 with it, so it ships without. The citywide model improved from 0.0810 to
+   0.0789 and keeps it (`reports/model_selection.json → weather_ablation`). In the final citywide
+   model `fcst_temp_c` has 0.43% of the split gain, while the 4-week seasonal rolling mean of lag
+   168 has 72.6% (`reports/final_model.json → top_features_gain_share`). Seasonal lags already
+   explain most of the variance, the test season is summer, and a single grid point misses local
+   showers.
+7. **How would you detect that the model needs retraining?** `drift_report` tracks three
+   signals: feature PSI between the training window and the latest month (largest data-driven
+   value 0.036), per-zone target PSI (0 significant, 4 moderate of 50), and weekly WAPE of the
+   refit model against a model frozen at the test start. Frozen minus refit was +0.0002 in the
+   first 4 test weeks and −0.0023 in the last 4, so there was no decay to fix
+   (`reports/drift.json`). In production I would refit weekly anyway (the final fit takes 21.4 s,
+   `reports/final_model.json → groups.zones.fit_seconds`) and alert on PSI > 0.25 for a
+   data-driven feature or on the weekly WAPE ratio to seasonal naive rising.
 8. **What does the orchestration give you over a script?** Asset lineage from raw files to the
    drift report, dbt tests surfaced as asset checks, and selective re-materialisation. For example,
    `nyc-demand-forecast run --select backtest_results,drift_report` reruns just the ML tail. Every
