@@ -1,0 +1,383 @@
+{
+  "generated_at": "2026-11-07T14:01:03+00:00",
+  "protocol": {
+    "horizon_h": 24,
+    "origin": "23:00 local each day; forecasts the next calendar day (24 hourly values)",
+    "refit": "LightGBM re-fitted weekly on all data <= the week's first origin (expanding)",
+    "calibration": {
+      "first_origin": "2026-06-10 23:00:00",
+      "last_origin": "2026-07-07 23:00:00",
+      "n_folds": 4,
+      "n_origins": 28
+    },
+    "test": {
+      "first_origin": "2026-07-08 23:00:00",
+      "last_origin": "2026-09-29 23:00:00",
+      "n_folds": 12,
+      "n_origins": 84
+    },
+    "hardware": "CPU only, LightGBM n_jobs=4 (i7-11800H laptop)"
+  },
+  "groups": {
+    "zones": {
+      "model_config": {
+        "name": "lgbm_tweedie_no_weather",
+        "objective": "tweedie",
+        "use_weather": false,
+        "params": {
+          "tweedie_variance_power": 1.2
+        }
+      },
+      "test_metrics_first_origin_of_each_fold": [
+        {
+          "model": "lgbm_frozen",
+          "wape": 0.14601408450948003,
+          "mase": 0.6968349529981382,
+          "smape": 0.21006691537921302,
+          "n_points": 14400,
+          "n_series": 50
+        },
+        {
+          "model": "lgbm",
+          "wape": 0.14604516047649557,
+          "mase": 0.6977875760232943,
+          "smape": 0.21037005995310096,
+          "n_points": 14400,
+          "n_series": 50
+        },
+        {
+          "model": "seasonal_naive_24h",
+          "wape": 0.17538457236531665,
+          "mase": 0.8445541525606266,
+          "smape": 0.2850412690506547,
+          "n_points": 14400,
+          "n_series": 50
+        },
+        {
+          "model": "mstl",
+          "wape": 0.18860876358824238,
+          "mase": 0.8803654217105021,
+          "smape": 0.36963679170288855,
+          "n_points": 14400,
+          "n_series": 50
+        },
+        {
+          "model": "seasonal_naive_168h",
+          "wape": 0.2089550047711091,
+          "mase": 0.9905025887357306,
+          "smape": 0.28326186798250963,
+          "n_points": 14400,
+          "n_series": 50
+        }
+      ],
+      "n_series": 50,
+      "test_metrics": [
+        {
+          "model": "lgbm_frozen",
+          "wape": 0.14954834885166185,
+          "mase": 0.6426620902322375,
+          "smape": 0.21785912765335042,
+          "n_points": 100800,
+          "n_series": 50
+        },
+        {
+          "model": "lgbm",
+          "wape": 0.1508211355748868,
+          "mase": 0.647811691939975,
+          "smape": 0.21905154597025478,
+          "n_points": 100800,
+          "n_series": 50
+        },
+        {
+          "model": "seasonal_naive_168h",
+          "wape": 0.20933726027116872,
+          "mase": 0.8929247987194686,
+          "smape": 0.2951350959809177,
+          "n_points": 100800,
+          "n_series": 50
+        },
+        {
+          "model": "mstl",
+          "wape": 0.23494814797270244,
+          "mase": 0.9633333092195633,
+          "smape": 0.40837132566199663,
+          "n_points": 100800,
+          "n_series": 50
+        },
+        {
+          "model": "seasonal_naive_24h",
+          "wape": 0.2773320123895215,
+          "mase": 1.1630295972076394,
+          "smape": 0.3700202668479527,
+          "n_points": 100800,
+          "n_series": 50
+        }
+      ],
+      "lgbm_vs_seasonal_naive_168h": {
+        "wape_relative_improvement": 0.27953038374765216,
+        "mase_relative_improvement": 0.2745058790292385,
+        "folds_won_wape": 12,
+        "n_folds": 12,
+        "series_won_wape": 50,
+        "n_series": 50
+      },
+      "intervals": {
+        "80": {
+          "nominal": 0.8,
+          "empirical_coverage": 0.7992361111111111,
+          "median_relative_width": 0.5291261426444658,
+          "n": 100800
+        },
+        "95": {
+          "nominal": 0.95,
+          "empirical_coverage": 0.948422619047619,
+          "median_relative_width": 0.9269539713153332,
+          "n": 100800
+        }
+      },
+      "interval_coverage_by_hour": {
+        "80": {
+          "0": 0.7633,
+          "1": 0.8202,
+          "2": 0.8657,
+          "3": 0.8986,
+          "4": 0.9067,
+          "5": 0.9057,
+          "6": 0.8838,
+          "7": 0.8393,
+          "8": 0.8217,
+          "9": 0.83,
+          "10": 0.8614,
+          "11": 0.8443,
+          "12": 0.8312,
+          "13": 0.8307,
+          "14": 0.7914,
+          "15": 0.784,
+          "16": 0.7738,
+          "17": 0.715,
+          "18": 0.6864,
+          "19": 0.7093,
+          "20": 0.7026,
+          "21": 0.715,
+          "22": 0.6936,
+          "23": 0.7079
+        },
+        "95": {
+          "0": 0.9429,
+          "1": 0.9538,
+          "2": 0.9717,
+          "3": 0.9795,
+          "4": 0.984,
+          "5": 0.9852,
+          "6": 0.9779,
+          "7": 0.9624,
+          "8": 0.9555,
+          "9": 0.97,
+          "10": 0.9769,
+          "11": 0.97,
+          "12": 0.9667,
+          "13": 0.97,
+          "14": 0.9564,
+          "15": 0.9498,
+          "16": 0.94,
+          "17": 0.9071,
+          "18": 0.8845,
+          "19": 0.9017,
+          "20": 0.9105,
+          "21": 0.9169,
+          "22": 0.9114,
+          "23": 0.9174
+        }
+      },
+      "causality_audit": {
+        "rows_checked": 504000,
+        "violations": 0,
+        "max_horizon_h": 24,
+        "min_horizon_h": 1
+      }
+    },
+    "citywide": {
+      "model_config": {
+        "name": "lgbm_poisson",
+        "objective": "poisson",
+        "use_weather": true,
+        "params": {}
+      },
+      "test_metrics_first_origin_of_each_fold": [
+        {
+          "model": "lgbm",
+          "wape": 0.08321697230098032,
+          "mase": 0.6075212066646334,
+          "smape": 0.0843532057099407,
+          "n_points": 288,
+          "n_series": 1
+        },
+        {
+          "model": "lgbm_frozen",
+          "wape": 0.08580403409645618,
+          "mase": 0.6264079176353106,
+          "smape": 0.08977637959492973,
+          "n_points": 288,
+          "n_series": 1
+        },
+        {
+          "model": "seasonal_naive_24h",
+          "wape": 0.09845579832715799,
+          "mase": 0.7187714687156457,
+          "smape": 0.12196801581929059,
+          "n_points": 288,
+          "n_series": 1
+        },
+        {
+          "model": "mstl",
+          "wape": 0.11770201646186979,
+          "mase": 0.859277489802802,
+          "smape": 0.19373245985079734,
+          "n_points": 288,
+          "n_series": 1
+        },
+        {
+          "model": "seasonal_naive_168h",
+          "wape": 0.13203105486367878,
+          "mase": 0.9638858943086256,
+          "smape": 0.12259760502861902,
+          "n_points": 288,
+          "n_series": 1
+        }
+      ],
+      "n_series": 1,
+      "test_metrics": [
+        {
+          "model": "lgbm",
+          "wape": 0.08282411817142325,
+          "mase": 0.5529603390658802,
+          "smape": 0.08990628077533092,
+          "n_points": 2016,
+          "n_series": 1
+        },
+        {
+          "model": "lgbm_frozen",
+          "wape": 0.08494712677475726,
+          "mase": 0.567134224439578,
+          "smape": 0.09318066589384572,
+          "n_points": 2016,
+          "n_series": 1
+        },
+        {
+          "model": "seasonal_naive_168h",
+          "wape": 0.12572110848061277,
+          "mase": 0.8393543850269927,
+          "smape": 0.13194597649242054,
+          "n_points": 2016,
+          "n_series": 1
+        },
+        {
+          "model": "seasonal_naive_24h",
+          "wape": 0.17886239757709774,
+          "mase": 1.1941426506427077,
+          "smape": 0.225665814711077,
+          "n_points": 2016,
+          "n_series": 1
+        },
+        {
+          "model": "mstl",
+          "wape": 0.23114197183616367,
+          "mase": 1.5431778320216416,
+          "smape": 0.2867629056059355,
+          "n_points": 2016,
+          "n_series": 1
+        }
+      ],
+      "lgbm_vs_seasonal_naive_168h": {
+        "wape_relative_improvement": 0.3412075412603015,
+        "mase_relative_improvement": 0.3412075412603014,
+        "folds_won_wape": 11,
+        "n_folds": 12,
+        "series_won_wape": 1,
+        "n_series": 1
+      },
+      "intervals": {
+        "80": {
+          "nominal": 0.8,
+          "empirical_coverage": 0.8035714285714286,
+          "median_relative_width": 0.2504447996881193,
+          "n": 2016
+        },
+        "95": {
+          "nominal": 0.95,
+          "empirical_coverage": 0.9499007936507936,
+          "median_relative_width": 0.45594516137026636,
+          "n": 2016
+        }
+      },
+      "interval_coverage_by_hour": {
+        "80": {
+          "0": 0.7262,
+          "1": 0.8571,
+          "2": 0.869,
+          "3": 0.9048,
+          "4": 0.8929,
+          "5": 0.9167,
+          "6": 0.9048,
+          "7": 0.7738,
+          "8": 0.8333,
+          "9": 0.869,
+          "10": 0.9048,
+          "11": 0.9048,
+          "12": 0.8571,
+          "13": 0.869,
+          "14": 0.8095,
+          "15": 0.8095,
+          "16": 0.7619,
+          "17": 0.7381,
+          "18": 0.7024,
+          "19": 0.7262,
+          "20": 0.6548,
+          "21": 0.6429,
+          "22": 0.7262,
+          "23": 0.631
+        },
+        "95": {
+          "0": 0.9524,
+          "1": 0.9643,
+          "2": 0.9881,
+          "3": 0.9762,
+          "4": 0.9762,
+          "5": 1.0,
+          "6": 0.9881,
+          "7": 0.9048,
+          "8": 0.9524,
+          "9": 0.9643,
+          "10": 0.9881,
+          "11": 0.9643,
+          "12": 0.9643,
+          "13": 0.9762,
+          "14": 0.9643,
+          "15": 0.9405,
+          "16": 0.9524,
+          "17": 0.9167,
+          "18": 0.881,
+          "19": 0.881,
+          "20": 0.881,
+          "21": 0.9643,
+          "22": 0.9524,
+          "23": 0.9048
+        }
+      },
+      "causality_audit": {
+        "rows_checked": 10080,
+        "violations": 0,
+        "max_horizon_h": 24,
+        "min_horizon_h": 1
+      }
+    }
+  },
+  "timings_s": {
+    "zones_lgbm_s": 374.5,
+    "zones_lgbm_frozen_s": 37.7,
+    "zones_mstl_s": 201.7,
+    "citywide_lgbm_s": 45.7,
+    "citywide_lgbm_frozen_s": 16.7,
+    "citywide_mstl_s": 12.9
+  }
+}

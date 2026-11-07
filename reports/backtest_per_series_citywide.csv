@@ -1,0 +1,2 @@
+series_group,unique_id,wape_lgbm,mase_lgbm,smape_lgbm,mean_y_lgbm,wape_sn168,mase_sn168,smape_sn168,mean_y_sn168
+citywide,citywide,0.08282,0.55296,0.08991,4907.20685,0.12572,0.83935,0.13195,4907.20685

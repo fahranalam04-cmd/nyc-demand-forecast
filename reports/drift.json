@@ -1,0 +1,188 @@
+{
+  "generated_at": "2026-11-07T14:21:02+00:00",
+  "thresholds": {
+    "moderate": 0.1,
+    "significant": 0.25
+  },
+  "feature_drift": {
+    "reference": "model features 2024-10-29 00:00:00 .. 2026-07-08 23:00:00 (test-period training window)",
+    "current": "2026-09-01 .. 2026-09-30 23:00:00",
+    "n_features": 18,
+    "n_alerting_features": 12,
+    "n_significant": 0,
+    "n_moderate": 0,
+    "max_alerting_psi": 0.036472114798822904,
+    "top": [
+      {
+        "feature": "rolling_mean_lag24_window_size168",
+        "psi": 0.036472114798822904,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "rolling_std_lag24_window_size168",
+        "psi": 0.034631224437251154,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "seasonal_rolling_mean_lag168_season_length168_window_size4",
+        "psi": 0.023389902964153338,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "lag336",
+        "psi": 0.020888762909700598,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "rolling_mean_lag24_window_size24",
+        "psi": 0.020760328581575133,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "lag72",
+        "psi": 0.0120521317134479,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "lag168",
+        "psi": 0.011203574374383247,
+        "level": "stable",
+        "deterministic_calendar": false
+      },
+      {
+        "feature": "lag48",
+        "psi": 0.010231078905091172,
+        "level": "stable",
+        "deterministic_calendar": false
+      }
+    ],
+    "calendar_features_not_alerting": [
+      {
+        "feature": "month",
+        "psi": 8.498166352838068,
+        "level": "significant",
+        "deterministic_calendar": true
+      },
+      {
+        "feature": "dayofweek",
+        "psi": 0.009598109853863652,
+        "level": "stable",
+        "deterministic_calendar": true
+      },
+      {
+        "feature": "hour_of_week",
+        "psi": 0.0074986223450681025,
+        "level": "stable",
+        "deterministic_calendar": true
+      },
+      {
+        "feature": "is_holiday_adjacent",
+        "psi": 6.143123289938359e-05,
+        "level": "stable",
+        "deterministic_calendar": true
+      },
+      {
+        "feature": "is_holiday",
+        "psi": 1.2881006030611558e-05,
+        "level": "stable",
+        "deterministic_calendar": true
+      },
+      {
+        "feature": "hour",
+        "psi": 0.0,
+        "level": "stable",
+        "deterministic_calendar": true
+      }
+    ]
+  },
+  "target_drift_per_zone": {
+    "n_zones": 50,
+    "n_significant": 0,
+    "n_moderate": 4,
+    "median_psi": 0.03193012592363296
+  },
+  "trip_attribute_drift": {
+    "baseline": "2024-10 .. 2024-12 clean trips",
+    "latest_month": [
+      {
+        "source_month": "2026-09",
+        "attribute": "trip_distance_mi",
+        "psi": 0.03479547778762312,
+        "level": "stable"
+      },
+      {
+        "source_month": "2026-09",
+        "attribute": "fare_amount",
+        "psi": 0.07149070403042067,
+        "level": "stable"
+      },
+      {
+        "source_month": "2026-09",
+        "attribute": "total_amount",
+        "psi": 0.09393249307889306,
+        "level": "stable"
+      },
+      {
+        "source_month": "2026-09",
+        "attribute": "duration_min",
+        "psi": 0.02757653763034967,
+        "level": "stable"
+      }
+    ],
+    "months_with_significant_drift": {}
+  },
+  "performance_over_time": {
+    "weekly_wape_lgbm": [
+      0.1406,
+      0.1497,
+      0.1376,
+      0.1362,
+      0.1499,
+      0.1296,
+      0.1695,
+      0.1571,
+      0.1857,
+      0.1531,
+      0.1521,
+      0.1507
+    ],
+    "weekly_wape_lgbm_frozen": [
+      0.1406,
+      0.1504,
+      0.1371,
+      0.137,
+      0.148,
+      0.1268,
+      0.1683,
+      0.1564,
+      0.1841,
+      0.1484,
+      0.1505,
+      0.1494
+    ],
+    "weekly_wape_seasonal_naive_168h": [
+      0.2681,
+      0.1879,
+      0.1942,
+      0.1707,
+      0.1858,
+      0.1999,
+      0.1934,
+      0.2068,
+      0.2228,
+      0.2859,
+      0.1892,
+      0.1956
+    ],
+    "frozen_minus_refit_first4_wape": 0.0002498422409524456,
+    "frozen_minus_refit_last4_wape": -0.0023163396210030343,
+    "lgbm_wape_slope_per_week": 0.0019222306590191173,
+    "frozen_wape_slope_per_week": 0.0016726175138777766
+  }
+}

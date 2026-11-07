@@ -115,6 +115,12 @@ def data_quality_report(dbt_results: dict[str, Any] | None = None) -> dict[str, 
     q["pct_removed"] = 100 * (1 - q["rows_clean"] / q["rows_raw"])
     vendor7 = v[v["vendor_id"] == 7]
     flex = v[(v["vendor_id"] == 2)]
+    # Real pickups a naive "duration <= 0 or fare < 0" filter would ALSO have removed.
+    naive = v.groupby("source_month")[["zero_duration_with_distance", "negative_fare_positive_total",
+                                       "rows_raw"]].sum()
+    naive_rows = naive["zero_duration_with_distance"] + naive["negative_fare_positive_total"]
+    naive_pct = 100 * naive_rows / naive["rows_raw"]
+    naive_pct.index = naive_pct.index.astype(str)
     report = {
         "generated_at": _now(),
         "rule_order": [c.replace("removed_", "") for c in rule_cols],
@@ -128,6 +134,11 @@ def data_quality_report(dbt_results: dict[str, Any] | None = None) -> dict[str, 
             "vendor7_first_month": str(vendor7["source_month"].min()) if len(vendor7) else None,
             "vendor2_negative_fare_positive_total_rows": int(flex["negative_fare_positive_total"].sum()),
             "kept_by_refined_rules_note": "naive 'duration<=0 or fare<0' filters would drop these real pickups",
+            "naive_filter_extra_removed_pct_by_month": naive_pct.round(3).to_dict(),
+            "naive_filter_extra_removed_pct_max": float(naive_pct.max()),
+            "naive_filter_extra_removed_pct_max_month": str(naive_pct.idxmax()),
+            "naive_filter_extra_removed_rows_total": int(naive["zero_duration_with_distance"].sum()
+                                                         + naive["negative_fare_positive_total"].sum()),
         },
         "warehouse": {
             "modelable_zones": int(zones[0]),
@@ -396,6 +407,11 @@ def drift_monitoring(df: pd.DataFrame | None = None) -> dict[str, Any]:
     ref = X[X["ds"] <= test_start]
     cur = X[X["ds"] >= latest_month_start]
     fpsi = drift.feature_psi(ref, cur, feat_cols)
+    # Calendar features are known in advance: their PSI only reflects which months the windows cover
+    # (a September month vs a multi-month reference), so they are reported but do not raise alerts.
+    calendar = {"hour", "dayofweek", "month", "hour_of_week", *features.CALENDAR_COLS}
+    fpsi["deterministic_calendar"] = fpsi["feature"].isin(calendar)
+    alerting = fpsi[~fpsi["deterministic_calendar"]]
     target_psi = pd.DataFrame(
         [{"unique_id": uid, "psi": drift.psi(ref.loc[ref["unique_id"] == uid, "y"].to_numpy(),
                                              cur.loc[cur["unique_id"] == uid, "y"].to_numpy())}
@@ -430,9 +446,12 @@ def drift_monitoring(df: pd.DataFrame | None = None) -> dict[str, Any]:
             "reference": f"model features {ref['ds'].min()} .. {test_start} (test-period training window)",
             "current": f"{latest_month_start.date()} .. {last}",
             "n_features": len(fpsi),
-            "n_significant": int((fpsi["level"] == "significant").sum()),
-            "n_moderate": int((fpsi["level"] == "moderate").sum()),
-            "top": fpsi.head(8).to_dict(orient="records"),
+            "n_alerting_features": len(alerting),
+            "n_significant": int((alerting["level"] == "significant").sum()),
+            "n_moderate": int((alerting["level"] == "moderate").sum()),
+            "max_alerting_psi": float(alerting["psi"].max()),
+            "top": alerting.head(8).to_dict(orient="records"),
+            "calendar_features_not_alerting": fpsi[fpsi["deterministic_calendar"]].to_dict(orient="records"),
         },
         "target_drift_per_zone": {
             "n_zones": len(target_psi),

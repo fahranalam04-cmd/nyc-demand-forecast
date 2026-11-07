@@ -1,0 +1,55 @@
+{
+  "generated_at": "2026-11-07T14:13:27+00:00",
+  "groups": {
+    "zones": {
+      "config": {
+        "name": "lgbm_tweedie_no_weather",
+        "objective": "tweedie",
+        "use_weather": false,
+        "params": {
+          "tweedie_variance_power": 1.2
+        }
+      },
+      "train_rows": 876000,
+      "train_end": "2026-09-30 23:00:00",
+      "fit_seconds": 21.4,
+      "model_path": "D:\\ml-portfolio\\models\\forecast\\final_mlforecast_zones.pkl",
+      "top_features_gain_share": {
+        "seasonal_rolling_mean_lag168_season_length168_window_size4": 0.8187,
+        "lag168": 0.0997,
+        "lag336": 0.0221,
+        "lag24": 0.0205,
+        "seasonal_rolling_mean_lag24_season_length24_window_size7": 0.0076,
+        "hour_of_week": 0.0052,
+        "lag25": 0.0049,
+        "month": 0.0046,
+        "zone": 0.0045,
+        "is_holiday": 0.0043
+      }
+    },
+    "citywide": {
+      "config": {
+        "name": "lgbm_poisson",
+        "objective": "poisson",
+        "use_weather": true,
+        "params": {}
+      },
+      "train_rows": 17520,
+      "train_end": "2026-09-30 23:00:00",
+      "fit_seconds": 1.7,
+      "model_path": "D:\\ml-portfolio\\models\\forecast\\final_mlforecast_citywide.pkl",
+      "top_features_gain_share": {
+        "seasonal_rolling_mean_lag168_season_length168_window_size4": 0.7261,
+        "lag168": 0.1411,
+        "lag24": 0.0442,
+        "lag25": 0.0175,
+        "lag336": 0.016,
+        "hour_of_week": 0.0096,
+        "rolling_mean_lag24_window_size24": 0.0069,
+        "is_holiday": 0.0062,
+        "rolling_std_lag24_window_size168": 0.0044,
+        "fcst_temp_c": 0.0043
+      }
+    }
+  }
+}

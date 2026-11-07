@@ -1,0 +1,129 @@
+{
+  "generated_at": "2026-11-07T13:49:11+00:00",
+  "validation": {
+    "first_origin": "2026-05-13 23:00:00",
+    "last_origin": "2026-06-09 23:00:00",
+    "n_folds": 4,
+    "n_origins": 28
+  },
+  "groups": {
+    "zones": {
+      "candidates": [
+        {
+          "model": "lgbm_tweedie",
+          "wape": 0.14613618118575367,
+          "mase": 0.6964634971363861,
+          "smape": 0.22023029076437198,
+          "n_points": 33600,
+          "n_series": 50
+        },
+        {
+          "model": "lgbm_l1",
+          "wape": 0.14674464069320448,
+          "mase": 0.6980183383126786,
+          "smape": 0.22097226409102055,
+          "n_points": 33600,
+          "n_series": 50
+        },
+        {
+          "model": "lgbm_l2",
+          "wape": 0.14743376533663016,
+          "mase": 0.7094928423745462,
+          "smape": 0.22806223064433784,
+          "n_points": 33600,
+          "n_series": 50
+        },
+        {
+          "model": "lgbm_poisson",
+          "wape": 0.14872526567255226,
+          "mase": 0.7095885381584387,
+          "smape": 0.22463529444799546,
+          "n_points": 33600,
+          "n_series": 50
+        },
+        {
+          "model": "seasonal_naive_168h",
+          "wape": 0.2351318130764128,
+          "mase": 1.105543752452717,
+          "smape": 0.32875642787143877,
+          "n_points": 33600,
+          "n_series": 50
+        }
+      ],
+      "weather_ablation": {
+        "model": "lgbm_tweedie_no_weather",
+        "wape": 0.1458272955077303,
+        "mase": 0.6960997855411015,
+        "smape": 0.2195905099064182,
+        "n_points": 33600,
+        "n_series": 50
+      },
+      "chosen": {
+        "name": "lgbm_tweedie_no_weather",
+        "objective": "tweedie",
+        "use_weather": false,
+        "params": {
+          "tweedie_variance_power": 1.2
+        }
+      }
+    },
+    "citywide": {
+      "candidates": [
+        {
+          "model": "lgbm_poisson",
+          "wape": 0.07894002936107916,
+          "mase": 0.596081209631659,
+          "smape": 0.09761880953097941,
+          "n_points": 672,
+          "n_series": 1
+        },
+        {
+          "model": "lgbm_l2",
+          "wape": 0.08065104020273511,
+          "mase": 0.6090011619098883,
+          "smape": 0.10154365543373853,
+          "n_points": 672,
+          "n_series": 1
+        },
+        {
+          "model": "lgbm_tweedie",
+          "wape": 0.08126887043874091,
+          "mase": 0.613666437529952,
+          "smape": 0.09841530583075388,
+          "n_points": 672,
+          "n_series": 1
+        },
+        {
+          "model": "lgbm_l1",
+          "wape": 0.08157649300801076,
+          "mase": 0.6159893152218467,
+          "smape": 0.10473449686748669,
+          "n_points": 672,
+          "n_series": 1
+        },
+        {
+          "model": "seasonal_naive_168h",
+          "wape": 0.16030814221115053,
+          "mase": 1.2104970329557563,
+          "smape": 0.1880280231622282,
+          "n_points": 672,
+          "n_series": 1
+        }
+      ],
+      "weather_ablation": {
+        "model": "lgbm_poisson_no_weather",
+        "wape": 0.08102715399432882,
+        "mase": 0.6118412212013137,
+        "smape": 0.09788638836684607,
+        "n_points": 672,
+        "n_series": 1
+      },
+      "chosen": {
+        "name": "lgbm_poisson",
+        "objective": "poisson",
+        "use_weather": true,
+        "params": {}
+      }
+    }
+  }
+}

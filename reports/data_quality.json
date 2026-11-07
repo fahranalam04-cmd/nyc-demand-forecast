@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-07T13:49:09+00:00",
+  "generated_at": "2026-11-07T14:18:22+00:00",
   "rule_order": [
     "duplicate",
     "pickup_outside_file_month",
@@ -317,7 +317,36 @@
     "vendor7_zero_duration_with_distance_rows": 935785,
     "vendor7_first_month": "2024-12-01 00:00:00",
     "vendor2_negative_fare_positive_total_rows": 1914022,
-    "kept_by_refined_rules_note": "naive 'duration<=0 or fare<0' filters would drop these real pickups"
+    "kept_by_refined_rules_note": "naive 'duration<=0 or fare<0' filters would drop these real pickups",
+    "naive_filter_extra_removed_pct_by_month": {
+      "2024-10-01": 0.373,
+      "2024-11-01": 0.309,
+      "2024-12-01": 0.24,
+      "2025-01-01": 2.378,
+      "2025-02-01": 3.697,
+      "2025-03-01": 3.905,
+      "2025-04-01": 3.732,
+      "2025-05-01": 6.009,
+      "2025-06-01": 6.203,
+      "2025-07-01": 5.783,
+      "2025-08-01": 6.146,
+      "2025-09-01": 5.424,
+      "2025-10-01": 6.314,
+      "2025-11-01": 7.846,
+      "2025-12-01": 1.3,
+      "2026-01-01": 1.179,
+      "2026-02-01": 1.168,
+      "2026-03-01": 1.204,
+      "2026-04-01": 1.27,
+      "2026-05-01": 1.245,
+      "2026-06-01": 1.268,
+      "2026-07-01": 1.164,
+      "2026-08-01": 1.202,
+      "2026-09-01": 1.22
+    },
+    "naive_filter_extra_removed_pct_max": 7.845878122485916,
+    "naive_filter_extra_removed_pct_max_month": "2025-11-01",
+    "naive_filter_extra_removed_rows_total": 2850704
   },
   "warehouse": {
     "modelable_zones": 263,

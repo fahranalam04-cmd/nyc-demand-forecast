@@ -1,8 +1,27 @@
 {
-  "started_at": "2026-11-07T13:43:55+00:00",
-  "select": "*",
-  "exit_code": 2,
-  "wall_clock_s": 23.0,
+  "started_at": "2026-11-07T13:45:34+00:00",
+  "command": "dagster job execute -m nyc_demand_forecast.definitions -j full_pipeline",
+  "exit_code": 0,
+  "wall_clock_s": 1731.4,
   "hardware": "i7-11800H laptop, CPU only, 4 threads, DuckDB 3 GB / dbt 2.5 GB memory caps",
-  "step_stats_error": "IndexError('list index out of range')"
+  "dagster_run_id": "551b367f-6202-4199-9cc6-c424641f33e0",
+  "dagster_status": "SUCCESS",
+  "steps": {
+    "raw_taxi_zone_lookup": 1.3,
+    "raw_tlc_trip_files": 7.4,
+    "raw_weather": 0.4,
+    "raw_tlc_trip_files_tlc_feed_freshness": 12.6,
+    "raw_tlc_trip_files_tlc_months_complete": 0.1,
+    "warehouse_dbt_assets": 134.9,
+    "data_quality_report": 0.2,
+    "training_series": 2.0,
+    "model_selection": 711.5,
+    "training_series_training_series_structure": 0.5,
+    "backtest_results": 743.7,
+    "trained_model": 24.4,
+    "backtest_results_backtest_is_causal": 0.4,
+    "backtest_results_interval_coverage_near_nominal": 0.1,
+    "drift_report": 27.5,
+    "drift_report_no_significant_feature_drift": 0.2
+  }
 }
